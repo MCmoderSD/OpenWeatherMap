@@ -3,6 +3,10 @@ package de.MCmoderSD.openweathermap.enums;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Enum representing different speed units and providing methods for conversion.
+ */
+@SuppressWarnings("ALL")
 public enum SpeedUnit {
 
     // Constants
@@ -10,7 +14,11 @@ public enum SpeedUnit {
     KPH(),
     MPH();
 
-    // Methods
+    /**
+     * Returns the unit as a string.
+     *
+     * @return the unit as a string
+     */
     public String getUnit() {
         return switch (this) {
             case MPS -> "m/s";
@@ -19,6 +27,13 @@ public enum SpeedUnit {
         };
     }
 
+    /**
+     * Converts the given speed to the specified unit.
+     *
+     * @param speed the speed to convert
+     * @param unit  the unit to convert to
+     * @return the converted speed
+     */
     public float convert(float speed, SpeedUnit unit) {
         if (unit == this) return speed;
         switch (unit) {
@@ -38,6 +53,13 @@ public enum SpeedUnit {
         throw new IllegalArgumentException("Invalid speed unit.");
     }
 
+    /**
+     * Rounds the given value to the specified number of decimal places.
+     *
+     * @param value  the value to round
+     * @param places the number of decimal places
+     * @return the rounded value
+     */
     private static float round(float value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = BigDecimal.valueOf(value);

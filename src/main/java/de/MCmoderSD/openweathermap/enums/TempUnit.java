@@ -3,6 +3,10 @@ package de.MCmoderSD.openweathermap.enums;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Enum representing different temperature units and providing methods for conversion.
+ */
+@SuppressWarnings("ALL")
 public enum TempUnit {
 
     // Constants
@@ -10,7 +14,11 @@ public enum TempUnit {
     FAHRENHEIT(),
     KELVIN();
 
-    // Getters
+    /**
+     * Returns the unit as a string.
+     *
+     * @return the unit as a string
+     */
     public String getUnit() {
         return switch (this) {
             case CELSIUS -> "°C";
@@ -19,6 +27,13 @@ public enum TempUnit {
         };
     }
 
+    /**
+     * Converts the given temperature to the specified unit.
+     *
+     * @param temperature the temperature to convert
+     * @param unit        the unit to convert to
+     * @return the converted temperature
+     */
     public float convert(float temperature, TempUnit unit) {
         if (unit == this) return temperature;
         switch (unit) {
@@ -38,6 +53,13 @@ public enum TempUnit {
         throw new IllegalArgumentException("Invalid temperature unit.");
     }
 
+    /**
+     * Rounds the given value to the specified number of decimal places.
+     *
+     * @param value  the value to round
+     * @param places the number of decimal places
+     * @return the rounded value
+     */
     private static float round(float value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = BigDecimal.valueOf(value);

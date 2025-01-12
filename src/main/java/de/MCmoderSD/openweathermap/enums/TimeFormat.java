@@ -1,5 +1,8 @@
 package de.MCmoderSD.openweathermap.enums;
 
+/**
+ * Enum representing different time formats.
+ */
 public enum TimeFormat {
 
     // Constants
@@ -13,7 +16,11 @@ public enum TimeFormat {
         this.pattern = pattern;
     }
 
-    // Methods
+    /**
+     * Returns the pattern of the time format.
+     *
+     * @return the pattern of the time format
+     */
     public String getPattern() {
         return pattern;
     }

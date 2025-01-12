@@ -1,50 +1,3 @@
-# OpenWeatherMap
-[![](https://jitpack.io/v/MCmoderSD/OpenWeatherMap.svg)](https://jitpack.io/#MCmoderSD/OpenWeatherMap)
-
-## Description
-OpenWeatherMap is a Java library that provides an easy way to query weather data from the [OpenWeatherMap](https://openweathermap.org/) API. <br>
-You need an API key from OpenWeatherMap to use this library. You can get one [here](https://home.openweathermap.org/users/sign_up).
-
-## Features
-Currently, it only uses the [Current Weather](https://openweathermap.org/current) Data API from OpenWeatherMap. <br>
-You can query weather data by city name or by latitude and longitude. <br>
-It provides the following weather data: 
-- City name
-- Weather description
-- Temperature
-- Humidity
-- Pressure
-- Wind speed
-- Cloudiness
-- Sunrise
-- Sunset
-- Country code
-- Longitude
-- Latitude
-
-## Usage
-
-### Maven
-Make sure you have the JitPack repository added to your `pom.xml` file:
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-```
-Add the dependency to your `pom.xml` file:
-```xml
-<dependency>
-    <groupId>com.github.MCmoderSD</groupId>
-    <artifactId>OpenWeatherMap</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-### Usage Example
-```java
 import de.MCmoderSD.openweathermap.core.OpenWeatherMap;
 import de.MCmoderSD.openweathermap.data.Weather;
 import de.MCmoderSD.openweathermap.enums.SpeedUnit;
@@ -99,4 +52,3 @@ public class Main {
         );
     }
 }
-```
