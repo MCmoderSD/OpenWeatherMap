@@ -6,6 +6,7 @@ import de.MCmoderSD.openweathermap.enums.TempUnit;
 import de.MCmoderSD.openweathermap.enums.TimeFormat;
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * The Weather class represents weather data retrieved from the OpenWeatherMap API.
@@ -26,6 +27,7 @@ public class Weather {
     private final int humidity;
     private final float windSpeed;
     private final float cloudiness;
+    private final long timezone;
     private final long sunrise;
     private final long sunset;
 
@@ -47,7 +49,7 @@ public class Weather {
      * @param sunrise     the sunrise time in Unix time
      * @param sunset      the sunset time in Unix time
      */
-    public Weather(float longitude, float latitude, String city, String country, String weather, String description, float temperature, float feelsLike, int pressure, int humidity, float windSpeed, float cloudiness, int sunrise, int sunset) {
+    public Weather(float longitude, float latitude, String city, String country, String weather, String description, float temperature, float feelsLike, int pressure, int humidity, float windSpeed, float cloudiness, long timezone, long sunrise, long sunset) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.city = city;
@@ -60,6 +62,7 @@ public class Weather {
         this.humidity = humidity;
         this.windSpeed = windSpeed;
         this.cloudiness = cloudiness;
+        this.timezone = timezone;
         this.sunrise = sunrise;
         this.sunset = sunset;
     }
@@ -104,8 +107,9 @@ public class Weather {
         this.cloudiness = cloudiness.get("all").floatValue();
 
         // Get sunrise and sunset
-        sunrise = sys.get("sunrise").asLong();
-        sunset = sys.get("sunset").asLong();
+        timezone = data.get("timezone").asLong();
+        sunrise = sys.get("sunrise").asLong() + timezone;
+        sunset = sys.get("sunset").asLong() + timezone;
     }
 
     /**
@@ -220,6 +224,15 @@ public class Weather {
     }
 
     /**
+     * Returns the timezone in seconds.
+     *
+     * @return the timezone
+     */
+    public long getTimezone() {
+        return timezone;
+    }
+
+    /**
      * Returns the sunrise time in Unix time.
      *
      * @return the sunrise time
@@ -238,22 +251,26 @@ public class Weather {
     }
 
     /**
-     * Returns the formatted sunrise time.
+     * Returns the formatted sunrise time in UTC time zone.
      *
      * @param format the time format
      * @return the formatted sunrise time
      */
     public String getSunrise(TimeFormat format) {
-        return new SimpleDateFormat(format.getPattern()).format(sunrise * 1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat(format.getPattern());
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(sunrise * 1000L);
     }
 
     /**
-     * Returns the formatted sunset time.
+     * Returns the formatted sunset time in UTC time zone.
      *
      * @param format the time format
      * @return the formatted sunset time
      */
     public String getSunset(TimeFormat format) {
-        return new SimpleDateFormat(format.getPattern()).format(sunset * 1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat(format.getPattern());
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(sunset * 1000L);
     }
 }
