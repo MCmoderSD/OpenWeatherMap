@@ -5,17 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.MCmoderSD</groupId>
-    <artifactId>openweathermap</artifactId>
-    <version>1.0.1</version>
+    <artifactId>OpenWeatherMap</artifactId>
+    <version>1.1.0</version>
 
-    <name>OpenWeatherMap</name>
-    <description>OpenWeatherMap is a Java library that provides an easy way to query weather data from the OpenWeatherMap API</description>
+    <name>Open Weather Map</name>
+    <description>Open Weather Map is a Java library that provides an easy way to query weather data from the Open Weather Map API</description>
 
     <distributionManagement>
         <repository>
-            <id>OpenWeatherMap</id>
-            <name>GitHub MCmoderSD Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/MCmoderSD/OpenWeatherMap</url>
+            <id>Nexus</id>
+            <name>Sonatype Nexus</name>
+            <url>https://mcmodersd.de/nexus/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.18.2</version>
+            <version>2.18.3</version>
         </dependency>
     </dependencies>
 

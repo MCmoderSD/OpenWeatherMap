@@ -1,5 +1,4 @@
 # OpenWeatherMap
-[![](https://jitpack.io/v/MCmoderSD/OpenWeatherMap.svg)](https://jitpack.io/#MCmoderSD/OpenWeatherMap)
 
 ## Description
 OpenWeatherMap is a Java library that provides an easy way to query weather data from the [OpenWeatherMap](https://openweathermap.org/) API. <br>
@@ -25,21 +24,22 @@ It provides the following weather data:
 ## Usage
 
 ### Maven
-Make sure you have the JitPack repository added to your `pom.xml` file:
+Make sure you have my Sonatype Nexus OSS repository added to your `pom.xml` file:
 ```xml
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+        <id>Nexus</id>
+        <name>Sonatype Nexus</name>
+        <url>https://mcmodersd.de/nexus/repository/maven-releases/</url>
     </repository>
 </repositories>
 ```
 Add the dependency to your `pom.xml` file:
 ```xml
 <dependency>
-    <groupId>com.github.MCmoderSD</groupId>
+    <groupId>de.MCmoderSD</groupId>
     <artifactId>OpenWeatherMap</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
