@@ -3,6 +3,7 @@ package de.MCmoderSD.openweathermap.enums;
 /**
  * Enum representing different time formats.
  */
+@SuppressWarnings("ALL")
 public enum TimeFormat {
 
     // Constants

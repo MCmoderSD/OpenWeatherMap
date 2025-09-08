@@ -11,7 +11,7 @@ import java.util.TimeZone;
 /**
  * The Weather class represents weather data retrieved from the OpenWeatherMap API.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class Weather {
 
     // Attributes

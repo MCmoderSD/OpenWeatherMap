@@ -13,7 +13,7 @@ import java.security.InvalidParameterException;
 /**
  * The OpenWeatherMap class provides methods to query weather data from the OpenWeatherMap API.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class OpenWeatherMap {
 
     // Constants

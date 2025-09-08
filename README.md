@@ -39,7 +39,7 @@ Add the dependency to your `pom.xml` file:
 <dependency>
     <groupId>de.MCmoderSD</groupId>
     <artifactId>OpenWeatherMap</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -51,6 +51,7 @@ import de.MCmoderSD.openweathermap.enums.SpeedUnit;
 import de.MCmoderSD.openweathermap.enums.TempUnit;
 import de.MCmoderSD.openweathermap.enums.TimeFormat;
 
+@SuppressWarnings("ALL")
 public class Main {
 
     public static void main(String[] args) {

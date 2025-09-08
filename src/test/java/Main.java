@@ -4,6 +4,7 @@ import de.MCmoderSD.openweathermap.enums.SpeedUnit;
 import de.MCmoderSD.openweathermap.enums.TempUnit;
 import de.MCmoderSD.openweathermap.enums.TimeFormat;
 
+@SuppressWarnings("ALL")
 public class Main {
 
     public static void main(String[] args) {
