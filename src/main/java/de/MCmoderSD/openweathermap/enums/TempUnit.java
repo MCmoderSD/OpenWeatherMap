@@ -1,24 +1,16 @@
 package de.MCmoderSD.openweathermap.enums;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-/**
- * Enum representing different temperature units and providing methods for conversion.
- */
-@SuppressWarnings("ALL")
+import static de.MCmoderSD.openweathermap.utils.ConversionHelper.*;
+
+@SuppressWarnings({"unused", "DuplicateExpressions"})
 public enum TempUnit {
 
     // Constants
-    CELSIUS(),
-    FAHRENHEIT(),
-    KELVIN();
+    CELSIUS, FAHRENHEIT, KELVIN;
 
-    /**
-     * Returns the unit as a string.
-     *
-     * @return the unit as a string
-     */
+    // Get Unit Symbol
     public String getUnit() {
         return switch (this) {
             case CELSIUS -> "°C";
@@ -27,43 +19,29 @@ public enum TempUnit {
         };
     }
 
-    /**
-     * Converts the given temperature to the specified unit.
-     *
-     * @param temperature the temperature to convert
-     * @param unit        the unit to convert to
-     * @return the converted temperature
-     */
-    public float convert(float temperature, TempUnit unit) {
+    // Convert Temperature
+    public BigDecimal convert(BigDecimal temperature, TempUnit unit) {
+
+        // Check Parameters
+        if (temperature == null) throw new IllegalArgumentException("Temperature cannot be null.");
+        if (unit == null) throw new IllegalArgumentException("Unit cannot be null.");
         if (unit == this) return temperature;
+
+        // Convert Temperature
         switch (unit) {
             case CELSIUS -> {
-                if (this == FAHRENHEIT) return round((temperature * 9 / 5) + 32, 2);
-                if (this == KELVIN) return round(temperature + 273.15f, 2);
+                if (this == FAHRENHEIT) return temperature.multiply(BD_9, MC).divide(BD_5, MC).add(BD_32, MC);
+                if (this == KELVIN) return temperature.add(BD_273_15, MC);
             }
             case FAHRENHEIT -> {
-                if (this == CELSIUS) return round((temperature - 32) * 5 / 9, 2);
-                if (this == KELVIN) return round((temperature - 32) * 5 / 9 + 273.15f, 2);
+                if (this == CELSIUS) return temperature.subtract(BD_32, MC).multiply(BD_5, MC).divide(BD_9, MC);
+                if (this == KELVIN) return temperature.subtract(BD_32, MC).multiply(BD_5, MC).divide(BD_9, MC).add(BD_273_15, MC);
             }
             case KELVIN -> {
-                if (this == CELSIUS) return round(temperature - 273.15f, 2);
-                if (this == FAHRENHEIT) return round((temperature - 273.15f) * 9 / 5 + 32, 2);
+                if (this == CELSIUS) return temperature.subtract(BD_273_15, MC);
+                if (this == FAHRENHEIT) return temperature.subtract(BD_273_15, MC).multiply(BD_9, MC).divide(BD_5, MC).add(BD_32, MC);
             }
         }
         throw new IllegalArgumentException("Invalid temperature unit.");
-    }
-
-    /**
-     * Rounds the given value to the specified number of decimal places.
-     *
-     * @param value  the value to round
-     * @param places the number of decimal places
-     * @return the rounded value
-     */
-    private static float round(float value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.floatValue();
     }
 }

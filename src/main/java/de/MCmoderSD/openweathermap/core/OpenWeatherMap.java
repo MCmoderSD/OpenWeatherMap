@@ -1,7 +1,8 @@
 package de.MCmoderSD.openweathermap.core;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.MCmoderSD.openweathermap.data.Weather;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,10 +11,7 @@ import java.net.http.HttpResponse;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 
-/**
- * The OpenWeatherMap class provides methods to query weather data from the OpenWeatherMap API.
- */
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 public class OpenWeatherMap {
 
     // Constants
@@ -22,44 +20,51 @@ public class OpenWeatherMap {
     // Attributes
     private final String apiKey;
     private final HttpClient httpClient;
-    private final JsonMapper jsonMapper;
+    private final ObjectMapper objectMapper;
 
-    /**
-     * Constructs an OpenWeatherMap instance with the specified API key.
-     *
-     * @param apiKey the API key for accessing the OpenWeatherMap API
-     */
+    // Constructor
     public OpenWeatherMap(String apiKey) {
+
+        // Check Parameters
+        if (apiKey == null || apiKey.isBlank()) throw new InvalidParameterException("API key cannot be null or blank.");
+
+        // Set API Key
         this.apiKey = apiKey;
+
+        // Initialize HTTP Client and Object Mapper
         this.httpClient = HttpClient.newHttpClient();
-        this.jsonMapper = new JsonMapper();
+        this.objectMapper = new ObjectMapper();
     }
 
-    /**
-     * Queries weather data for a city.
-     *
-     * @param cityName the name of the city
-     * @param apiKey   the API key for accessing the OpenWeatherMap API
-     * @return the weather data for the specified city
-     * @throws IOException          if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     */
-    public static Weather query(String cityName, String apiKey) throws IOException, InterruptedException {
+    // Helper Method to Send Request and Parse Response
+    private JsonNode sendRequest(HttpRequest request) {
+        try {
+
+            // Send the request
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check response status
+            if (response.statusCode() == 404) throw new IllegalArgumentException("City not found.");
+            if (response.statusCode() != 200) throw new IOException("Unexpected response status: " + response.statusCode());
+
+            // Parse and return JSON response
+            return objectMapper.readTree(response.body());
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Failed to retrieve weather data: " + e.getMessage(), e);
+        }
+    }
+
+    // Query weather data by city name
+    public static Weather query(String cityName, String apiKey) {
         return new OpenWeatherMap(apiKey).query(cityName);
     }
 
-    /**
-     * Queries weather data for a city.
-     *
-     * @param cityName the name of the city
-     * @return the weather data for the specified city
-     * @throws IOException          if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     */
-    public Weather query(String cityName) throws IOException, InterruptedException {
+    // Query weather data by city name
+    public Weather query(String cityName) {
 
         // Check Parameters
-        if (cityName == null) throw new InvalidParameterException("City name cannot be null.");
+        if (cityName == null || cityName.isBlank())  throw new InvalidParameterException("City name cannot be null or blank.");
 
         // Encode city name
         String encodedCityName = cityName.replace(" ", "+");
@@ -71,33 +76,19 @@ public class OpenWeatherMap {
                 .build();
 
         // Send the request
-        return sendRequest(request);
+        return new Weather(sendRequest(request));
     }
 
-    /**
-     * Queries weather data for a location specified by latitude and longitude.
-     *
-     * @param latitude  the latitude of the location
-     * @param longitude the longitude of the location
-     * @param apiKey    the API key for accessing the OpenWeatherMap API
-     * @return the weather data for the specified location
-     * @throws IOException          if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     */
-    public static Weather query(float latitude, float longitude, String apiKey) throws IOException, InterruptedException {
+    // Query weather data by latitude and longitude
+    public static Weather query(double latitude, double longitude, String apiKey) {
         return new OpenWeatherMap(apiKey).query(latitude, longitude);
     }
 
-    /**
-     * Queries weather data for a location specified by latitude and longitude.
-     *
-     * @param latitude  the latitude of the location
-     * @param longitude the longitude of the location
-     * @return the weather data for the specified location
-     * @throws IOException          if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     */
-    public Weather query(float latitude, float longitude) throws IOException, InterruptedException {
+    // Query weather data by latitude and longitude
+    public Weather query(double latitude, double longitude) {
+
+        if (latitude < -90 || latitude > 90) throw new InvalidParameterException("Latitude must be between -90 and 90.");
+        if (longitude < -180 || longitude > 180) throw new InvalidParameterException("Longitude must be between -180 and 180.");
 
         // Construct the request
         HttpRequest request = HttpRequest.newBuilder()
@@ -106,56 +97,6 @@ public class OpenWeatherMap {
                 .build();
 
         // Send the request
-        return sendRequest(request);
-    }
-
-    /**
-     * Sends the HTTP request and returns the weather data.
-     *
-     * @param request the HTTP request to send
-     * @return the weather data
-     * @throws IOException          if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     */
-    private Weather sendRequest(HttpRequest request) throws IOException, InterruptedException {
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) throw new IOException("Failed to retrieve weather data.");
-        return new Weather(jsonMapper.readTree(response.body()));
-    }
-
-    /**
-     * Returns the API key.
-     *
-     * @return the API key
-     */
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    /**
-     * Returns the HTTP client.
-     *
-     * @return the HTTP client
-     */
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    /**
-     * Returns the JSON mapper.
-     *
-     * @return the JSON mapper
-     */
-    public JsonMapper getJsonMapper() {
-        return jsonMapper;
-    }
-
-    /**
-     * Returns the API endpoint.
-     *
-     * @return the API endpoint
-     */
-    public String getEndpoint() {
-        return ENDPOINT;
+        return new Weather(sendRequest(request));
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>de.MCmoderSD</groupId>
     <artifactId>OpenWeatherMap</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 
     <name>Open Weather Map</name>
     <description>Open Weather Map is a Java library that provides an easy way to query weather data from the Open Weather Map API</description>
@@ -20,16 +20,16 @@
     </distributionManagement>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.20.0</version>
+            <version>3.0.4</version>
         </dependency>
     </dependencies>
 

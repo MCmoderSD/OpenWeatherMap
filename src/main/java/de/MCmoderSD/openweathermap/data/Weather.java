@@ -1,276 +1,217 @@
 package de.MCmoderSD.openweathermap.data;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.MCmoderSD.openweathermap.enums.SpeedUnit;
 import de.MCmoderSD.openweathermap.enums.TempUnit;
-import de.MCmoderSD.openweathermap.enums.TimeFormat;
+import tools.jackson.databind.JsonNode;
 
-import java.text.SimpleDateFormat;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.TimeZone;
 
-/**
- * The Weather class represents weather data retrieved from the OpenWeatherMap API.
- */
-@SuppressWarnings("ALL")
-public class Weather {
+import static de.MCmoderSD.openweathermap.enums.SpeedUnit.MPS;
+import static de.MCmoderSD.openweathermap.enums.TempUnit.KELVIN;
 
-    // Attributes
-    private final float longitude;
-    private final float latitude;
+@SuppressWarnings("unused")
+public class Weather implements Serializable {
+
+    // Raw Data
+    private final JsonNode data;
+
+    // Coordinates
+    private final BigDecimal longitude;
+    private final BigDecimal latitude;
+
+    // Location
     private final String city;
     private final String country;
-    private final String weather;
+
+    // Timezone
+    private final TimeZone timezone;
+
+    // Sunrise and Sunset
+    private final long sunrise; // UTC
+    private final long sunset;  // UTC
+
+    // Weather
+    private final String title;
     private final String description;
-    private final float temperature;
-    private final float feelsLike;
+
+    // Weather Data
+    private final BigDecimal temperature;
+    private final BigDecimal feelsLike;
+    private final BigDecimal tempMin;
+    private final BigDecimal tempMax;
     private final int pressure;
     private final int humidity;
-    private final float windSpeed;
-    private final float cloudiness;
-    private final long timezone;
-    private final long sunrise;
-    private final long sunset;
 
-    /**
-     * Constructs a Weather instance with the specified parameters.
-     *
-     * @param longitude   the longitude of the location
-     * @param latitude    the latitude of the location
-     * @param city        the name of the city
-     * @param country     the country code
-     * @param weather     the main weather condition
-     * @param description the weather description
-     * @param temperature the temperature in Kelvin
-     * @param feelsLike   the perceived temperature in Kelvin
-     * @param pressure    the atmospheric pressure in hPa
-     * @param humidity    the humidity percentage
-     * @param windSpeed   the wind speed in meters per second
-     * @param cloudiness  the cloudiness percentage
-     * @param sunrise     the sunrise time in Unix time
-     * @param sunset      the sunset time in Unix time
-     */
-    public Weather(float longitude, float latitude, String city, String country, String weather, String description, float temperature, float feelsLike, int pressure, int humidity, float windSpeed, float cloudiness, long timezone, long sunrise, long sunset) {
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.city = city;
-        this.country = country;
-        this.weather = weather;
-        this.description = description;
-        this.temperature = temperature;
-        this.feelsLike = feelsLike;
-        this.pressure = pressure;
-        this.humidity = humidity;
-        this.windSpeed = windSpeed;
-        this.cloudiness = cloudiness;
-        this.timezone = timezone;
-        this.sunrise = sunrise;
-        this.sunset = sunset;
-    }
+    // Visibility
+    private final int visibility;
 
-    /**
-     * Constructs a Weather instance from a JsonNode.
-     *
-     * @param data the JsonNode containing weather data
-     */
+    // Wind Data
+    private final BigDecimal windSpeed;
+    private final int windDirection;
+    private final BigDecimal windGust;
+
+    // Other Data
+    private final int cloudiness;
+    private final BigDecimal rain;
+    private final BigDecimal snow;
+
+    // Constructor
     public Weather(JsonNode data) {
 
-        // Extract data
-        JsonNode coord = data.get("coord");
-        JsonNode sys = data.get("sys");
-        JsonNode weather = data.get("weather").get(0);
-        JsonNode main = data.get("main");
-        JsonNode wind = data.get("wind");
-        JsonNode cloudiness = data.get("clouds");
+        // Check Data
+        if (data == null) throw new IllegalArgumentException("Data cannot be null.");
 
-        // Get coordinates
-        longitude = coord.get("lon").floatValue();
-        latitude = coord.get("lat").floatValue();
+        // Set Raw Data
+        this.data = data;
 
-        // Get city and country
-        city = data.get("name").asText();
-        country = sys.get("country").asText();
+        // Parse Cords
+        var coord = data.get("coord");
+        this.longitude = coord.get("lon").asDecimal();
+        this.latitude = coord.get("lat").asDecimal();
 
-        // Get weather
-        this.weather = weather.get("main").asText();
-        description = weather.get("description").asText();
+        // Parse Location
+        var sys = data.get("sys");
+        this.city = data.get("name").asString();
+        this.country = sys.get("country").asString();
 
-        // Get main data
-        temperature = main.get("temp").floatValue();
-        feelsLike = main.get("feels_like").floatValue();
-        pressure = main.get("pressure").intValue();
-        humidity = main.get("humidity").intValue();
+        // Parse Timezone
+        var offset = data.get("timezone").asInt();
+        var zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
+        this.timezone = TimeZone.getTimeZone(zoneId);
 
-        // Get wind data
-        windSpeed = wind.get("speed").floatValue();
+        // Parse Sunrise and Sunset
+        this.sunrise = sys.get("sunrise").asLong();
+        this.sunset = sys.get("sunset").asLong();
 
-        // Get cloudiness
-        this.cloudiness = cloudiness.get("all").floatValue();
+        // Extract Weather
+        var weather = data.get("weather").get(0);
+        this.title = weather.get("main").asString();
+        this.description = weather.get("description").asString();
 
-        // Get sunrise and sunset
-        timezone = data.get("timezone").asLong();
-        sunrise = sys.get("sunrise").asLong() + timezone;
-        sunset = sys.get("sunset").asLong() + timezone;
+        // Extract Weather Data
+        var main = data.get("main");
+        this.temperature = main.get("temp").asDecimal();
+        this.feelsLike = main.get("feels_like").asDecimal();
+        this.pressure = main.get("pressure").asInt();
+        this.humidity = main.get("humidity").asInt();
+        this.tempMin = main.get("temp_min").asDecimal();
+        this.tempMax = main.get("temp_max").asDecimal();
+
+        // Parse Visibility
+        this.visibility =   data.get("visibility").asInt();
+
+        // Parse Wind Data
+        var wind = data.get("wind");
+        this.windSpeed = wind.get("speed").asDecimal();
+        this.windDirection = wind.get("deg").asInt();
+        this.windGust = wind.has("gust") ? wind.get("gust").asDecimal() : null;
+
+        // Parse Cloud Data
+        this.cloudiness = data.get("clouds").get("all").asInt();
+
+        // Parse Rain (optional)
+        this.rain = data.has("rain") ? data.get("rain").get("1h").asDecimal() : null;
+
+        // Parse Snow (optional)
+        this.snow = data.has("snow") ? data.get("snow").get("1h").asDecimal() : null;
     }
 
-    /**
-     * Returns the longitude of the location.
-     *
-     * @return the longitude
-     */
-    public float getLongitude() {
+    // Getters
+    public JsonNode getData() {
+        return data;
+    }
+
+    public BigDecimal getLongitude() {
         return longitude;
     }
 
-    /**
-     * Returns the latitude of the location.
-     *
-     * @return the latitude
-     */
-    public float getLatitude() {
+    public BigDecimal getLatitude() {
         return latitude;
     }
 
-    /**
-     * Returns the name of the city.
-     *
-     * @return the city name
-     */
     public String getCity() {
         return city;
     }
 
-    /**
-     * Returns the country code.
-     *
-     * @return the country code
-     */
     public String getCountry() {
         return country;
     }
 
-    /**
-     * Returns the main weather condition.
-     *
-     * @return the main weather condition
-     */
-    public String getWeather() {
-        return weather;
+    public TimeZone getTimezone() {
+        return timezone;
     }
 
-    /**
-     * Returns the weather description.
-     *
-     * @return the weather description
-     */
+    public Instant getSunrise() {
+        return Instant.ofEpochSecond(sunrise).atZone(timezone.toZoneId()).toInstant();
+    }
+
+    public Instant getSunset() {
+        return Instant.ofEpochSecond(sunset).atZone(timezone.toZoneId()).toInstant();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Returns the temperature in the specified unit.
-     *
-     * @param unit the temperature unit
-     * @return the temperature in the specified unit
-     */
-    public float getTemperature(TempUnit unit) {
-        return unit.convert(temperature, TempUnit.KELVIN);
+    public BigDecimal getTemperature(TempUnit unit) {
+        return unit.convert(temperature, KELVIN);
     }
 
-    /**
-     * Returns the perceived temperature in the specified unit.
-     *
-     * @param unit the temperature unit
-     * @return the perceived temperature in the specified unit
-     */
-    public float getFeelsLike(TempUnit unit) {
-        return unit.convert(feelsLike, TempUnit.KELVIN);
+    public BigDecimal getFeelsLike(TempUnit unit) {
+        return unit.convert(feelsLike, KELVIN);
     }
 
-    /**
-     * Returns the atmospheric pressure in hPa.
-     *
-     * @return the atmospheric pressure
-     */
+    public BigDecimal getTempMin(TempUnit unit) {
+        return unit.convert(tempMin, KELVIN);
+    }
+
+    public BigDecimal getTempMax(TempUnit unit) {
+        return unit.convert(tempMax, KELVIN);
+    }
+
     public int getPressure() {
         return pressure;
     }
 
-    /**
-     * Returns the humidity percentage.
-     *
-     * @return the humidity percentage
-     */
     public int getHumidity() {
         return humidity;
     }
 
-    /**
-     * Returns the wind speed in the specified unit.
-     *
-     * @param unit the speed unit
-     * @return the wind speed in the specified unit
-     */
-    public float getWindSpeed(SpeedUnit unit) {
-        return unit.convert(windSpeed, SpeedUnit.MPS);
+    public int getVisibility() {
+        return visibility;
     }
 
-    /**
-     * Returns the cloudiness percentage.
-     *
-     * @return the cloudiness percentage
-     */
-    public float getCloudiness() {
+    public BigDecimal getWindSpeed(SpeedUnit unit) {
+        return unit.convert(windSpeed, MPS);
+    }
+
+    public int getWindDirection() {
+        return windDirection;
+    }
+
+    public Optional<BigDecimal> getWindGust() {
+        return Optional.ofNullable(windGust);
+    }
+
+    public int getCloudiness() {
         return cloudiness;
     }
 
-    /**
-     * Returns the timezone in seconds.
-     *
-     * @return the timezone
-     */
-    public long getTimezone() {
-        return timezone;
+    public Optional<BigDecimal> getRain() {
+        return Optional.ofNullable(rain);
     }
 
-    /**
-     * Returns the sunrise time in Unix time.
-     *
-     * @return the sunrise time
-     */
-    public long getSunrise() {
-        return sunrise;
-    }
-
-    /**
-     * Returns the sunset time in Unix time.
-     *
-     * @return the sunset time
-     */
-    public long getSunset() {
-        return sunset;
-    }
-
-    /**
-     * Returns the formatted sunrise time in UTC time zone.
-     *
-     * @param format the time format
-     * @return the formatted sunrise time
-     */
-    public String getSunrise(TimeFormat format) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format.getPattern());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sdf.format(sunrise * 1000L);
-    }
-
-    /**
-     * Returns the formatted sunset time in UTC time zone.
-     *
-     * @param format the time format
-     * @return the formatted sunset time
-     */
-    public String getSunset(TimeFormat format) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format.getPattern());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sdf.format(sunset * 1000L);
+    public Optional<BigDecimal> getSnow() {
+        return Optional.ofNullable(snow);
     }
 }
