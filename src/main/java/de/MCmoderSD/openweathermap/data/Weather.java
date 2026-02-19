@@ -214,4 +214,14 @@ public class Weather implements Serializable {
     public Optional<BigDecimal> getSnow() {
         return Optional.ofNullable(snow);
     }
+
+    @Override
+    public int hashCode() {
+        return data.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.getClass() == getClass() && hashCode() == obj.hashCode();
+    }
 }
