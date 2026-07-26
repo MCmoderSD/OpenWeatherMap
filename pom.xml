@@ -6,10 +6,25 @@
 
     <groupId>de.MCmoderSD</groupId>
     <artifactId>OpenWeatherMap</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 
     <name>Open Weather Map</name>
     <description>Open Weather Map is a Java library that provides an easy way to query weather data from the Open Weather Map API</description>
+    <url>https://github.com/MCmoderSD/OpenWeatherMap</url>
+
+    <licenses>
+        <license>
+            <name>BSD 3-Clause License</name>
+            <url>https://github.com/MCmoderSD/OpenWeatherMap/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/MCmoderSD/OpenWeatherMap</url>
+        <connection>scm:git:https://github.com/MCmoderSD/OpenWeatherMap.git</connection>
+        <developerConnection>scm:git:https://github.com/MCmoderSD/OpenWeatherMap.git</developerConnection>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -29,7 +44,7 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.0.4</version>
+            <version>3.2.1</version>
         </dependency>
     </dependencies>
 
@@ -38,7 +53,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version> <!-- don't change this -->
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

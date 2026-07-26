@@ -72,54 +72,54 @@ public class Weather implements Serializable {
 
         // Parse Cords
         var coord = data.get("coord");
-        this.longitude = coord.get("lon").asDecimal();
-        this.latitude = coord.get("lat").asDecimal();
+        longitude = coord.get("lon").asDecimal();
+        latitude = coord.get("lat").asDecimal();
 
         // Parse Location
         var sys = data.get("sys");
-        this.city = data.get("name").asString();
-        this.country = sys.get("country").asString();
+        city = data.get("name").asString();
+        country = sys.get("country").asString();
 
         // Parse Timezone
         var offset = data.get("timezone").asInt();
         var zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofTotalSeconds(offset));
-        this.timezone = TimeZone.getTimeZone(zoneId);
+        timezone = TimeZone.getTimeZone(zoneId);
 
         // Parse Sunrise and Sunset
-        this.sunrise = sys.get("sunrise").asLong();
-        this.sunset = sys.get("sunset").asLong();
+        sunrise = sys.get("sunrise").asLong();
+        sunset = sys.get("sunset").asLong();
 
         // Extract Weather
         var weather = data.get("weather").get(0);
-        this.title = weather.get("main").asString();
-        this.description = weather.get("description").asString();
+        title = weather.get("main").asString();
+        description = weather.get("description").asString();
 
         // Extract Weather Data
         var main = data.get("main");
-        this.temperature = main.get("temp").asDecimal();
-        this.feelsLike = main.get("feels_like").asDecimal();
-        this.pressure = main.get("pressure").asInt();
-        this.humidity = main.get("humidity").asInt();
-        this.tempMin = main.get("temp_min").asDecimal();
-        this.tempMax = main.get("temp_max").asDecimal();
+        temperature = main.get("temp").asDecimal();
+        feelsLike = main.get("feels_like").asDecimal();
+        pressure = main.get("pressure").asInt();
+        humidity = main.get("humidity").asInt();
+        tempMin = main.get("temp_min").asDecimal();
+        tempMax = main.get("temp_max").asDecimal();
 
         // Parse Visibility
-        this.visibility =   data.get("visibility").asInt();
+        visibility =   data.get("visibility").asInt();
 
         // Parse Wind Data
         var wind = data.get("wind");
-        this.windSpeed = wind.get("speed").asDecimal();
-        this.windDirection = wind.get("deg").asInt();
-        this.windGust = wind.has("gust") ? wind.get("gust").asDecimal() : null;
+        windSpeed = wind.get("speed").asDecimal();
+        windDirection = wind.get("deg").asInt();
+        windGust = wind.has("gust") ? wind.get("gust").asDecimal() : null;
 
         // Parse Cloud Data
-        this.cloudiness = data.get("clouds").get("all").asInt();
+        cloudiness = data.get("clouds").get("all").asInt();
 
         // Parse Rain (optional)
-        this.rain = data.has("rain") ? data.get("rain").get("1h").asDecimal() : null;
+        rain = data.has("rain") ? data.get("rain").get("1h").asDecimal() : null;
 
         // Parse Snow (optional)
-        this.snow = data.has("snow") ? data.get("snow").get("1h").asDecimal() : null;
+        snow = data.has("snow") ? data.get("snow").get("1h").asDecimal() : null;
     }
 
     // Getters

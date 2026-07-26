@@ -3,17 +3,19 @@ import de.MCmoderSD.openweathermap.data.Weather;
 import de.MCmoderSD.openweathermap.enums.SpeedUnit;
 import de.MCmoderSD.openweathermap.enums.TempUnit;
 
+import static java.lang.IO.println;
+
 void main() {
 
     // Variables
-    String cityName = "Berlin";     // City name
-    String apiKey = "YOUR_API_KEY"; // OpenWeatherMap API key
+    var cityName = "Berlin";     // City name
+    var apiKey = "YOUR_API_KEY"; // OpenWeatherMap API key
 
-    double latitude = 52.5244f;     // Latitude
-    double longitude = 13.4105f;    // Longitude
+    var latitude = 52.5244d;     // Latitude
+    var longitude = 13.4105d;    // Longitude
 
     // Initialize OpenWeatherMap
-    OpenWeatherMap openWeatherMap = new OpenWeatherMap(apiKey);
+    var openWeatherMap = new OpenWeatherMap(apiKey);
 
     // Query weather data
     Weather weather = null;
@@ -31,7 +33,7 @@ void main() {
 
     // Print weather data
     assert weather != null;
-    IO.println(formatWeatherData(weather));
+    println(formatWeatherData(weather));
 }
 
 private static String formatWeatherData(Weather weather) {

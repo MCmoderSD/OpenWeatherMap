@@ -32,8 +32,8 @@ public class OpenWeatherMap {
         this.apiKey = apiKey;
 
         // Initialize HTTP Client and Object Mapper
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
+        httpClient = HttpClient.newHttpClient();
+        objectMapper = new ObjectMapper();
     }
 
     // Helper Method to Send Request and Parse Response
@@ -41,7 +41,7 @@ public class OpenWeatherMap {
         try {
 
             // Send the request
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             // Check response status
             if (response.statusCode() == 404) throw new IllegalArgumentException("City not found.");
@@ -67,10 +67,10 @@ public class OpenWeatherMap {
         if (cityName == null || cityName.isBlank())  throw new InvalidParameterException("City name cannot be null or blank.");
 
         // Encode city name
-        String encodedCityName = cityName.replace(" ", "+");
+        var encodedCityName = cityName.replace(" ", "+");
 
         // Construct the request
-        HttpRequest request = HttpRequest.newBuilder()
+        var request = HttpRequest.newBuilder()
                 .uri(URI.create(ENDPOINT + "?q=" + encodedCityName + "&appid=" + apiKey))
                 .GET()
                 .build();
@@ -91,7 +91,7 @@ public class OpenWeatherMap {
         if (longitude < -180 || longitude > 180) throw new InvalidParameterException("Longitude must be between -180 and 180.");
 
         // Construct the request
-        HttpRequest request = HttpRequest.newBuilder()
+        var request = HttpRequest.newBuilder()
                 .uri(URI.create(ENDPOINT + "?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey))
                 .GET()
                 .build();
