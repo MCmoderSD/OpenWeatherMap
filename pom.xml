@@ -6,7 +6,7 @@
 
     <groupId>de.MCmoderSD</groupId>
     <artifactId>OpenWeatherMap</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 
     <name>Open Weather Map</name>
     <description>Open Weather Map is a Java library that provides an easy way to query weather data from the Open Weather Map API</description>
